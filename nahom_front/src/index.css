@@ -1,0 +1,31 @@
+:root {
+  --font-base: 'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --primary-color: #f5f7fb;
+  --secondary-color: #2d35c5;
+  --white-color: #ffffff;
+  --gray-color: #5a5f6d;
+  --black-color: #030303;
+}
+
+body.theme-dark {
+  --primary-color: #0f1320;
+  --secondary-color: #67a6ff;
+  --white-color: #1a2236;
+  --gray-color: #c5ccdd;
+  --black-color: #f5f7ff;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-base);
+  color: var(--black-color);
+  background-color: var(--primary-color);
+  transition: background-color 0.25s ease, color 0.25s ease;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}

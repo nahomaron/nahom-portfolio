@@ -1,0 +1,34 @@
+# macOS
+.DS_Store
+
+# Node
+**/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build outputs
+**/build/
+**/dist/
+**/.cache/
+**/.parcel-cache/
+**/coverage/
+
+# Environment files
+**/.env
+**/.env.local
+**/.env.development.local
+**/.env.test.local
+**/.env.production.local
+
+# IDE
+.vscode/
+.idea/
+
+# Sanity local/generated
+nahom_back/.sanity/
+nahom_back/.sanity-config/
+
+# Optional backup from single-repo migration
+nahom_front/.git_backup_single_repo_setup/
