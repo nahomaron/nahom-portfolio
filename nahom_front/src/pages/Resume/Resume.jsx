@@ -12,7 +12,7 @@ const Resume = () => {
 
   useEffect(() => {
     client
-      .fetch('*[_type == "resume"][0]')
+      .fetch('*[_type == "resume"][0]{..., resumePdf{asset->{url}}}')
       .then((data) => {
         setResume(data || null);
       })

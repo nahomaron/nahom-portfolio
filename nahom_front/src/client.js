@@ -1,11 +1,11 @@
 import imageUrlBuilder from '@sanity/image-url';
 import { createClient } from '@sanity/client';
 
-const projectId = process.env.REACT_APP_SANITY_PROJECT_ID || 'ea9jltyb';
-const dataset = process.env.REACT_APP_SANITY_DATASET || 'production';
-const apiVersion = process.env.REACT_APP_SANITY_API_VERSION || '2023-10-01';
-const useCdnEnv = process.env.REACT_APP_SANITY_USE_CDN;
-const useCdn = useCdnEnv ? useCdnEnv !== 'false' : process.env.NODE_ENV === 'production';
+const projectId = import.meta.env.VITE_SANITY_PROJECT_ID || 'ea9jltyb';
+const dataset = import.meta.env.VITE_SANITY_DATASET || 'production';
+const apiVersion = import.meta.env.VITE_SANITY_API_VERSION || '2023-10-01';
+const useCdnEnv = import.meta.env.VITE_SANITY_USE_CDN;
+const useCdn = useCdnEnv ? useCdnEnv !== 'false' : import.meta.env.PROD;
 
 export const client = createClient({
   projectId,

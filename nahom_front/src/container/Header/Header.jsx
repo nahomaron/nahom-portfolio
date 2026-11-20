@@ -133,12 +133,12 @@ const Header = () => (
       className="app__header-img"
     >
       <div className="profile-visual">
-        <img src={images.profile} alt="Yafiet portrait" />
+        <img src={images.profile} alt="Nahom Aron Dawit" />
         <motion.img
           whileInView={{ scale: [0, 1] }}
           transition={{ duration: 1, ease: 'easeInOut' }}
           src={images.circle}
-          alt="Decorative circle"
+          alt=""
           className="overlay_circle"
         />
         <div className="profile-visual__badge">First-gen Scholar</div>

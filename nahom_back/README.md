@@ -1,9 +1,13 @@
-# Sanity Clean Content Studio
+# Portfolio content Studio
 
-Congratulations, you have now installed the Sanity Content Studio, an open-source real-time content editing environment connected to the Sanity backend.
+Sanity Studio 6 with React 19, built on Node.js 22. The public frontend remains independently on React 18.
 
-Now you can do the following things:
+```bash
+npm ci
+npm start
+npm run build
+```
 
-- [Read “getting started” in the docs](https://www.sanity.io/docs/introduction/getting-started?utm_source=readme)
-- [Join the Sanity community](https://www.sanity.io/community/join?utm_source=readme)
-- [Extend and build plugins](https://www.sanity.io/docs/content-studio/extending?utm_source=readme)
+Use npm and the committed package-lock.json. Set `SANITY_STUDIO_CONTACT_DATASET=contacts` to enable the separate private inbox workspace. See [DEPLOYMENT.md](../DEPLOYMENT.md) for dataset permissions, deployment, and the existing-message privacy review.
+
+Automatic Studio upgrades are disabled so production uses the version verified by CI. Targeted dependency overrides patch the CLI's YAML/TOML parsers and minimatch; review and remove them when upstream dependencies incorporate these fixes. Recheck CLI startup and Studio builds when updating them.

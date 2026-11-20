@@ -36,3 +36,7 @@ npm start
 - Resume and portfolio content are sourced from Sanity.
 - Configure environment variables in `nahom_front/.env`.
 - Keep this as a single Git repository for coordinated frontend/backend changes.
+
+## Production
+
+See [DEPLOYMENT.md](DEPLOYMENT.md) for hosting configuration, private contact storage, required server secrets, and release verification.
