@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { HiMenuAlt4, HiMoon, HiSun, HiX } from 'react-icons/hi';
 import { motion } from 'framer-motion';
@@ -9,21 +9,75 @@ import './Navbar.scss';
 const Navbar = () => {
   const [toggle, setToggle] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const menuButton = useRef(null);
+  const menuPanel = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
-  const navItems = ['home', 'education', 'work', 'research', 'honors', 'skills', 'contact'];
+  const navItems = [
+    'home',
+    'education',
+    'work',
+    'research',
+    'honors',
+    'skills',
+    'contact',
+  ];
 
   useEffect(() => {
     if (typeof window === 'undefined') {
       return;
     }
 
-    const storedTheme = window.localStorage.getItem('theme');
+    let storedTheme;
+    try {
+      storedTheme = window.localStorage.getItem('theme');
+    } catch {
+      /* Storage may be disabled. */
+    }
     const nextIsDark = storedTheme ? storedTheme === 'dark' : true;
 
     setIsDarkMode(nextIsDark);
     document.body.classList.toggle('theme-dark', nextIsDark);
   }, []);
+
+  useEffect(() => {
+    if (!toggle) return;
+    const panel = menuPanel.current;
+    panel?.querySelector('button')?.focus();
+    const close = () => {
+      setToggle(false);
+      menuButton.current?.focus();
+    };
+    const handleKey = (event) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        close();
+      }
+      if (event.key === 'Tab') {
+        const items = panel?.querySelectorAll('button, a[href]');
+        if (!items?.length) return;
+        const first = items[0];
+        const last = items[items.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
+    };
+    const media = window.matchMedia('(min-width: 900px)');
+    const handleResize = () => {
+      if (media.matches) setToggle(false);
+    };
+    document.addEventListener('keydown', handleKey);
+    media.addEventListener('change', handleResize);
+    return () => {
+      document.removeEventListener('keydown', handleKey);
+      media.removeEventListener('change', handleResize);
+    };
+  }, [toggle]);
 
   const handleNavClick = (event, section) => {
     if (event) {
@@ -40,8 +94,11 @@ const Navbar = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
 
-      if (typeof window !== 'undefined' && window.location.hash !== targetHash) {
-        window.history.replaceState(null, '', targetHash);
+      if (
+        typeof window !== 'undefined' &&
+        window.location.hash !== targetHash
+      ) {
+        window.history.replaceState(window.history.state, '', targetHash);
       }
     } else {
       navigate('/', {
@@ -50,6 +107,7 @@ const Navbar = () => {
       });
     }
 
+    if (toggle) menuButton.current?.focus();
     setToggle(false);
   };
 
@@ -59,7 +117,11 @@ const Navbar = () => {
     setIsDarkMode(nextIsDark);
 
     if (typeof window !== 'undefined') {
-      window.localStorage.setItem('theme', nextIsDark ? 'dark' : 'light');
+      try {
+        window.localStorage.setItem('theme', nextIsDark ? 'dark' : 'light');
+      } catch {
+        /* Theme still works without persistence. */
+      }
     }
 
     if (typeof document !== 'undefined') {
@@ -78,7 +140,10 @@ const Navbar = () => {
         {navItems.map((item) => (
           <li className="app__flex p-text" key={`link-${item}`}>
             <div />
-            <a href={`/#${item}`} onClick={(event) => handleNavClick(event, item)}>
+            <a
+              href={`/#${item}`}
+              onClick={(event) => handleNavClick(event, item)}
+            >
               {item}
             </a>
           </li>
@@ -90,25 +155,54 @@ const Navbar = () => {
           type="button"
           className="app__navbar-theme-toggle"
           onClick={handleThemeToggle}
-          aria-label={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+          aria-label={
+            isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'
+          }
           title={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
         >
           {isDarkMode ? <HiSun /> : <HiMoon />}
         </button>
 
         <div className="app__navbar-menu">
-          <HiMenuAlt4 onClick={() => setToggle(true)} />
+          <button
+            ref={menuButton}
+            type="button"
+            className="menu-icon-button"
+            aria-label="Open navigation"
+            aria-expanded={toggle}
+            aria-controls="mobile-navigation"
+            onClick={() => setToggle(true)}
+          >
+            <HiMenuAlt4 aria-hidden="true" />
+          </button>
 
           {toggle && (
             <motion.div
+              id="mobile-navigation"
+              ref={menuPanel}
+              role="dialog"
+              aria-label="Mobile navigation"
               whileInView={{ x: [300, 0] }}
               transition={{ duration: 0.85, ease: 'easeOut' }}
             >
-              <HiX onClick={() => setToggle(false)} />
+              <button
+                type="button"
+                className="menu-icon-button"
+                aria-label="Close navigation"
+                onClick={() => {
+                  setToggle(false);
+                  menuButton.current?.focus();
+                }}
+              >
+                <HiX aria-hidden="true" />
+              </button>
               <ul>
                 {navItems.map((item) => (
                   <li key={item}>
-                    <a href={`/#${item}`} onClick={(event) => handleNavClick(event, item)}>
+                    <a
+                      href={`/#${item}`}
+                      onClick={(event) => handleNavClick(event, item)}
+                    >
                       {item}
                     </a>
                   </li>

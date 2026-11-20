@@ -132,7 +132,7 @@ const ProjectDetail = () => {
     if (typeof window !== 'undefined') {
       window.scrollTo({ top: 0, behavior: 'auto' });
       if (window.location.hash) {
-        window.history.replaceState(null, '', window.location.pathname);
+        window.history.replaceState(window.history.state, '', window.location.pathname);
       }
     }
   }, [slug]);
@@ -140,6 +140,7 @@ const ProjectDetail = () => {
   useEffect(() => {
     if (!slug) return;
 
+    let active = true;
     setLoading(true);
     setError('');
 
@@ -159,13 +160,15 @@ const ProjectDetail = () => {
         { slug }
       )
       .then((data) => {
+        if (!active) return;
         setProject(data);
         if (!data) {
           setError('Project not found.');
         }
       })
-      .catch(() => setError('Unable to load project details right now.'))
-      .finally(() => setLoading(false));
+      .catch(() => { if (active) setError('Unable to load project details right now.'); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
   }, [slug]);
 
   const introText = useMemo(() => {
@@ -215,7 +218,7 @@ const ProjectDetail = () => {
   if (error) {
     return (
       <div className="project-detail project-detail__state">
-        <button type="button" className="project-detail__back" onClick={() => navigate(-1)}>
+        <button type="button" className="project-detail__back" onClick={() => navigate('/#work')}>
           <AiOutlineArrowLeft />
           Back
         </button>
@@ -232,7 +235,7 @@ const ProjectDetail = () => {
     <div className="project-detail">
       <header className="project-detail__hero">
         <div className="project-detail__meta">
-          <button type="button" className="project-detail__back" onClick={() => navigate(-1)}>
+          <button type="button" className="project-detail__back" onClick={() => navigate('/#work')}>
             <AiOutlineArrowLeft />
             Back
           </button>

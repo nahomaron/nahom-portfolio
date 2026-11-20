@@ -226,3 +226,15 @@ body.theme-dark {
     background-color: #0f1320;
   }
 }
+
+.menu-icon-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  min-height: 44px;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+}

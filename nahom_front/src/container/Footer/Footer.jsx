@@ -5,7 +5,12 @@ import { AppWrap, MotionWrap } from '../../wrapper';
 import './Footer.scss';
 
 const Footer = () => {
-  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    message: '',
+    website: '',
+  });
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formError, setFormError] = useState('');
@@ -17,7 +22,9 @@ const Footer = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (loading) return;
     if (!name || !email || !message) {
       setFormError('Please complete all fields before sending your message.');
       return;
@@ -37,15 +44,19 @@ const Footer = () => {
 
       if (!response.ok) {
         if (response.status === 404) {
-          throw new Error('Contact endpoint is unavailable. Run `vercel dev` locally or deploy to Vercel.');
+          throw new Error(
+            'Contact form is unavailable. Please use the email link.',
+          );
         }
-        const error = await response.json().catch(() => ({ message: 'Unknown error' }));
+        const error = await response
+          .json()
+          .catch(() => ({ message: 'Unknown error' }));
         throw new Error(error?.message || 'Unable to send your message.');
       }
 
       setIsFormSubmitted(true);
       setFormError('');
-      setFormData({ name: '', email: '', message: '' });
+      setFormData({ name: '', email: '', message: '', website: '' });
     } catch (error) {
       setFormError(error.message || 'Unable to send your message right now.');
     } finally {
@@ -60,21 +71,43 @@ const Footer = () => {
       <div className="app__footer-cards">
         <div className="app__footer-card ">
           <img src={images.email} alt="email" />
-          <a href="mailto:d.nahom.aron@gmail.com" className="p-text">d.nahom.aron@gmail.com</a>
+          <a href="mailto:d.nahom.aron@gmail.com" className="p-text">
+            d.nahom.aron@gmail.com
+          </a>
         </div>
         <div className="app__footer-card">
           <img src={images.mobile} alt="phone" />
-          <a href="tel:+8617200386437" className="p-text">+12405362523</a>
+          <a href="tel:+12405362523" className="p-text">
+            +12405362523
+          </a>
         </div>
       </div>
       {!isFormSubmitted ? (
-        <div className="app__footer-form app__flex">
+        <form
+          className="app__footer-form app__flex"
+          onSubmit={handleSubmit}
+          aria-busy={loading}
+        >
+          <label className="contact-honeypot" aria-hidden="true">
+            Website
+            <input
+              name="website"
+              value={formData.website}
+              onChange={handleChangeInput}
+              tabIndex={-1}
+              autoComplete="off"
+            />
+          </label>
           <div className="app__flex">
             <input
               className="p-text"
               type="text"
               placeholder="Your Name"
               name="name"
+              aria-label="Your name"
+              autoComplete="name"
+              required
+              maxLength={120}
               value={name}
               onChange={handleChangeInput}
               disabled={loading}
@@ -86,6 +119,10 @@ const Footer = () => {
               type="email"
               placeholder="Your Email"
               name="email"
+              aria-label="Your email"
+              autoComplete="email"
+              required
+              maxLength={254}
               value={email}
               onChange={handleChangeInput}
               disabled={loading}
@@ -97,6 +134,10 @@ const Footer = () => {
               placeholder="Your Message"
               value={message}
               name="message"
+              aria-label="Your message"
+              required
+              minLength={20}
+              maxLength={2000}
               onChange={handleChangeInput}
               disabled={loading}
             />
@@ -106,20 +147,13 @@ const Footer = () => {
               {formError}
             </p>
           )}
-          <button
-            type="button"
-            className="p-text"
-            onClick={handleSubmit}
-            disabled={loading}
-          >
+          <button type="submit" className="p-text" disabled={loading}>
             {!loading ? 'Send Message' : 'Sending...'}
           </button>
-        </div>
+        </form>
       ) : (
-        <div>
-          <h3 className="head-text">
-            Thank you for getting in touch!
-          </h3>
+        <div role="status">
+          <h3 className="head-text">Thank you for getting in touch!</h3>
         </div>
       )}
     </>
